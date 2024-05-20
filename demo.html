@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <a href='#' onclick="i()">Connect to Dualsense.</a>
+    <br/>
+    <div id="inputDisplay"></p>
+    <script src="DualSense.js"></script>
+    <script>
+        let ds = new DualSense();
+
+        let inputDisplay = document.getElementById('inputDisplay');
+
+        function i(){
+            ds.init();
+
+            ds.setLightBarColor(255, 255, 0);
+            ds.setMuteButtonLed(ds.muteButtonLedState.pulse);
+            ds.setPlayerNumber(1);
+
+            
+            vibrateTrigger = {
+                selectedTrigger: ds.triggers.both,
+                mode: 0x06,
+                forces: [17, 63, 100, 0, 0, 0, 0]
+            }
+
+            ds.setTrigger(vibrateTrigger);
+            setInterval(() => {
+                inputDisplay.innerHTML = JSON.stringify(ds.states);
+                if (-0.5 <= ds.states.ls.x && ds.states.ls.x <= 0.5) {
+                    ds.setSoftMotor(0);
+                } else if (ds.states.circle == false) {
+                    ds.setSoftMotor(255);
+                }
+
+                if (ds.states.circle == true) {
+                    ds.setHeavyMotor(255);
+                } else if (ds.states.circle == false) {
+                    ds.setHeavyMotor(0);
+                }
+            }, 16);
+
+        }
+    </script>
+</body>
+</html>
